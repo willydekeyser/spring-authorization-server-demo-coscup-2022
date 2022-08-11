@@ -25,7 +25,8 @@ public class DefaultSecurityConfig {
         return http.build();
     }
 
-    @Bean
+    @SuppressWarnings("deprecation")
+	@Bean
     UserDetailsService users() {
         UserDetails user = User.withDefaultPasswordEncoder()
           .username("user1")

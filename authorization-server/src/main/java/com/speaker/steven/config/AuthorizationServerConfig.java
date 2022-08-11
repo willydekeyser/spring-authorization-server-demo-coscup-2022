@@ -40,9 +40,6 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import java.security.KeyStore;
 import java.util.UUID;
 
-/**
- * @author Steven
- */
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfig {
 
@@ -72,37 +69,43 @@ public class AuthorizationServerConfig {
     @Bean
     public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
         RegisteredClient openBankingAuthCodeRegisteredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("open-banking-authorization-code-client")
-                .clientSecret("{noop}open-banking-authorization-code-secret")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+                //.clientId("open-banking-authorization-code-client")
+                //.clientSecret("{noop}open-banking-authorization-code-secret")
+                .clientId("messaging-client")
+                .clientSecret("{noop}secret")
+                //.clientAuthenticationMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/open-banking-idp")
-                .redirectUri("https://example.com")
+                //.redirectUri("http://127.0.0.1:8080/login/oauth2/code/open-banking-idp")
+                .redirectUri("https://oidcdebugger.com/debug")
+                .redirectUri("https://oauthdebugger.com/debug")
+                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/messaging-client-oidc")
+                .redirectUri("http://127.0.0.1:8080/authorized")
                 .scope(OidcScopes.OPENID)
-                .scope("accounts.read")
-                .scope("accounts.write")
+                .scope("message.read")
+                .scope("message.write")
                 .tokenSettings(TokenSettings.builder().build())
                 .clientSettings(ClientSettings.builder()
                         .requireAuthorizationConsent(true)
                         .tokenEndpointAuthenticationSigningAlgorithm(SignatureAlgorithm.RS256)
-                        .jwkSetUrl("http://oauth.steven.speaker.com:9000/oauth2/jwks")
+                        .jwkSetUrl("http://localhost:9000/oauth2/jwks")
                         .build())
                 .build();
-        RegisteredClient githubRegisteredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("8b88e67ec3580dedc793")
-                .clientSecret("{noop}5092f4801e9702a3eb853baf7b7e00091057c057")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_JWT)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://127.0.0.1:8080/authorized")
-                .scope("accounts.read")
-                .build();
+//        RegisteredClient githubRegisteredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+//                .clientId("8b88e67ec3580dedc793")
+//                .clientSecret("{noop}5092f4801e9702a3eb853baf7b7e00091057c057")
+//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_JWT)
+//                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+//                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+//                .redirectUri("http://127.0.0.1:8080/authorized")
+//                .scope("accounts.read")
+//                .build();
 
         JdbcRegisteredClientRepository registeredClientRepository = new JdbcRegisteredClientRepository(jdbcTemplate);
         registeredClientRepository.save(openBankingAuthCodeRegisteredClient);
-        registeredClientRepository.save(githubRegisteredClient);
+        //registeredClientRepository.save(githubRegisteredClient);
 
         return registeredClientRepository;
     }
@@ -154,7 +157,7 @@ public class AuthorizationServerConfig {
     @Bean
     public ProviderSettings providerSettings() {
         return ProviderSettings.builder()
-          .issuer("http://oauth.steven.speaker.com:9000")
+          .issuer("http://localhost:9000")
           .build();
     }
 }

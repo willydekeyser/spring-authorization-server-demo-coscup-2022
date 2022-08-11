@@ -30,13 +30,13 @@ public class AuthEvents {
 
 	@Async
 	@EventListener
-	public void onSuccess(AuthorizationGrantedEvent success) {
+	public void onSuccess(AuthorizationGrantedEvent<?> success) {
 		log.info("AuthorizationGrantedEvent: 發送授權成功信");
 	}
 
 	@Async
 	@EventListener
-	public void onFailure(AuthorizationDeniedEvent failure) {
+	public void onFailure(AuthorizationDeniedEvent<?> failure) {
 		log.info("AuthorizationDeniedEvent: 發送授權失敗信");
 	}
 
